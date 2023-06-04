@@ -19,5 +19,3 @@ with open(links, "w", newline="") as csvfile:
     writer.writerow(["link"])  # Write header row
     for product in products:
         writer.writerow([product.get("href")])
-def sth ():
-    return "shit"
