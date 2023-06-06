@@ -1,21 +1,43 @@
-import requests
+from selenium import webdriver
 from bs4 import BeautifulSoup
-import csv
+import time
 
-# Send a GET request to the website
-url = "https://www.digikala.com/search/mobile-phone/"
-response = requests.get(url)
 
-# Parse the HTML content using BeautifulSoup
-soup = BeautifulSoup(response.content, "html.parser")
+webdriver_path = "E:/Projects/webscraping/chromedriver.exe"
+out=[]
+gonext = True
+minPrice = 1
+maxPrice = 5000000
 
-# Extract product information
-products = soup.find_all("div", class_="product-list_ProductList__item__LiiNI")
+# while gonext:
 
-# Save the product information in a CSV file
-links = "links.csv"
-with open(links, "w", newline="") as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(["link"])  # Write header row
-    for product in products:
-        writer.writerow([product.get("href")])
+url = "https://www.digikala.com/search/mobile-phone/?page=1"
+
+# Configure the web driver
+options = webdriver.ChromeOptions()
+driver = webdriver.Chrome(executable_path=webdriver_path, options=options)
+# Load the webpage
+driver.get(url)
+
+time.sleep(15)
+# Get the page source after JavaScript rendering
+page_source = driver.page_source
+
+# Create a BeautifulSoup object to parse the HTML content
+soup = BeautifulSoup(page_source, "html.parser")
+# Find all the anchor tags (<a>) in the parsed HTML
+
+anchor_tags = soup.find_all("a" , class_ = "d-block pointer pos-relative bg-000 overflow-hidden grow-1 py-3 px-4 px-2-lg h-full-md styles_VerticalProductCard--hover__ud7aD")
+
+# Extract the href attribute from each anchor tag
+links = [a.get("href") for a in anchor_tags if a.get("href")]
+
+if len(links) < 20:
+    gonext = False
+# Print all the links
+for link in links:
+    out.append(link)
+# Close the web driver
+driver.quit()
+
+print(len(out))
