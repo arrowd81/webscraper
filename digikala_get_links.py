@@ -4,7 +4,6 @@ import time
 import csv
 
 webdriver_path = "E:/Projects/webscraping/chromedriver.exe"
-out=[]
 nextpage = True
 nextprice = True
 minPrice = 1
@@ -59,5 +58,3 @@ while nextprice:
 
 
 linkfile.close()
-
-print(len(out))
