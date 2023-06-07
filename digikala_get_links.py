@@ -12,7 +12,6 @@ linkfile = open("links.csv" , "w" , encoding='utf-8')
 writer = csv.writer(linkfile , lineterminator='\n' ,)
 
 while nextprice:
-    print("maxprice = " , maxPrice)
     pagenum = 1
     while nextpage:
         # url = f"https://www.digikala.com/search/category-mobile-phone/product-list/?page={pagenum}&price%5Bmax%5D={maxPrice}0&price%5Bmin%5D={minPrice}0"
@@ -45,6 +44,7 @@ while nextprice:
         nextpage = True
     else:
         nextprice = False
+    print(f"progress = {maxPrice/1000000} %")
 
 
 linkfile.close()
