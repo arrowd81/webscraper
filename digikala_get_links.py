@@ -1,55 +1,45 @@
-from selenium import webdriver
 from bs4 import BeautifulSoup
-import time
+import requests
+import json
 import csv
 
-webdriver_path = "E:/Projects/webscraping/chromedriver.exe"
 nextpage = True
 nextprice = True
 minPrice = 1
 maxPrice = 500000
 
-linkfile = open("links.csv" , "w")
-writer = csv.writer(linkfile , lineterminator='\n')
+linkfile = open("links.csv" , "w" , encoding='utf-8')
+writer = csv.writer(linkfile , lineterminator='\n' ,)
 
 while nextprice:
+    print("maxprice = " , maxPrice)
     pagenum = 1
     while nextpage:
-        url = f"https://www.digikala.com/search/category-mobile-phone/product-list/?page={pagenum}&price%5Bmax%5D={maxPrice}0&price%5Bmin%5D={minPrice}0"
+        # url = f"https://www.digikala.com/search/category-mobile-phone/product-list/?page={pagenum}&price%5Bmax%5D={maxPrice}0&price%5Bmin%5D={minPrice}0"
+        url = f"https://api.digikala.com/v1/categories/mobile-phone/search/?price%5Bmax%5D={maxPrice}0&price%5Bmin%5D={minPrice}0&seo_url=%2Fcategory-mobile-phone%2Fproduct-list%2F%3Fprice%255bmax%255d%3D20000000%26price%255bmin%255d%3D0&page={pagenum}"
 
-        # Configure the web driver
-        options = webdriver.ChromeOptions()
-        driver = webdriver.Chrome(executable_path=webdriver_path, options=options)
+
         # Load the webpage
-        driver.get(url)
-
-        time.sleep(10)
+        response = requests.get(url)
 
         # Get the page source after JavaScript rendering
-        page_source = driver.page_source
+        data = response.json()
+        
+        products = data['data']['products']
 
-        # Create a BeautifulSoup object to parse the HTML content
-        soup = BeautifulSoup(page_source, "html.parser")
-        # Find all the anchor tags (<a>) in the parsed HTML
 
-        anchor_tags = soup.find_all("a" , class_ = "d-block pointer pos-relative bg-000 overflow-hidden grow-1 py-3 px-4 px-2-lg h-full-md styles_VerticalProductCard--hover__ud7aD")
-
-        # Extract the href attribute from each anchor tag
-        links = [a.get("href") for a in anchor_tags if a.get("href")]
-
-        if len(links) < 20:
+        if len(products) < 20:
             nextpage = False
         else:
             pagenum += 1
         
         # Print all the links
-        for link in links:
+        for product in products:
+            link = product["url"]["uri"]
             writer.writerow([link])
-            out.append(link)
-        # Close the web driver
-        driver.quit()
 
-    if maxPrice <= 2000000 :
+
+    if maxPrice <= 100000000 :
         minPrice += 500000
         maxPrice += 500000
         nextpage = True
