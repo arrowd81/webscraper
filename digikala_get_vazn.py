@@ -14,8 +14,18 @@ def getVazn(url):
   arrayout[0] = itemname
 
   #getvazn
-  itemvazn = data['data']['product']['specifications'][0]['attributes']
-  arrayout[2] = itemvazn[1]['values'][0]
+  item_attributes = data['data']['product']['specifications'][0]['attributes']
+  itemvazn = ""
+  found = False
+  index = 0
+  while(not found):
+    if item_attributes[index]['title'] == "وزن":
+      found = True
+      itemvazn = item_attributes[index]['values'][0]
+    else:
+      index += 1
+
+  arrayout[2] = itemvazn
 
   return arrayout
 
@@ -37,5 +47,3 @@ with open(pruduct_path, 'w', newline='' , encoding='utf-8') as csvfilew:
         url = (headurl + row[0][13:product_id_end])
         writer.writerow(getVazn(url))
       print(f"getting item number {reader.line_num}")
-
-
