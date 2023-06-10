@@ -3,7 +3,7 @@ import json
 import csv
 
 def getVazn(url):
-  arrayout = ["","<==name vanz==>",""]
+  arrayout = ["",""]
 
   response = requests.get(url)
 
@@ -18,14 +18,14 @@ def getVazn(url):
   itemvazn = ""
   found = False
   index = 0
-  while(not found):
-    if item_attributes[index]['title'] == "وزن":
+  while((not found) and index <= len(item_attributes)):
+    if item_attributes[index]['title'] == 'وزن':
       found = True
       itemvazn = item_attributes[index]['values'][0]
     else:
       index += 1
 
-  arrayout[2] = itemvazn
+  arrayout[1] = itemvazn.replace('گرم', '').strip()
 
   return arrayout
 
